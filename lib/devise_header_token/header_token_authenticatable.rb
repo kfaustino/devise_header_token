@@ -7,14 +7,19 @@ module Devise
       def valid?
         self.authentication_hash = {}
         self.authentication_type = :token_auth
-        if token = header_values[header_key]
+        token = header_values[header_key]
+        if token
           self.authentication_hash[mapping.to.token_authentication_key] = token
         else
-          false
+          super
         end
       end
 
       private
+
+      def valid_params_request?
+        true
+      end
 
       def header_key
         "HTTP_#{mapping.to.token_authentication_key.gsub('-', '_').upcase}"
